@@ -4,19 +4,15 @@ const bodyParser = require("body-parser");
 const date = require(__dirname + "/date.js");
 const { MongoClient, ServerApiVersion } = require("mongodb");
 require('dotenv').config()
-console.log(process.env) 
 
 const app = express(); //create app
 app.set("view engine", "ejs"); //use EJS as view engine
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
-//Connect to database
 const uri = process.env.MONGODB_URI;
-console.log(uri);
 
 let day = date();
-// Connect to the MongoDB Atlas database
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
@@ -27,9 +23,9 @@ const client = new MongoClient(uri, {
 
 async function connect() {
   try {
+    console.log("Attempting to connect to Mongo");
     await client.connect();
     console.log("Connected to db")
-    const foo = client.db("todolistdb").collection("todolist").find({})
     return client.db("todolistdb");
   } catch (err) {
     console.error("Error:", err);
@@ -65,6 +61,7 @@ app.post("/", async (req, res) => {
   }
 });
 
-app.listen(3000, function () {
-  console.log("Server started on port 3000");
+let port = process.env.PORT || 3000;
+app.listen(port, function () {
+  console.log(`Server started on port ${port}`);
 });
